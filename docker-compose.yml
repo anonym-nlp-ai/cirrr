@@ -29,7 +29,7 @@ services:
       - nginx_network
 
   aimw:
-    container_name: id-aimw
+    container_name: cir3-aimw
     image: "cir3-aimw:v0.1.5.1"
     build:
       context: ./aimw
