@@ -29,6 +29,11 @@ class CIR3Settings(BaseSettings):
 
     ai_model_kwargs: dict = Field(default={"seed": 178})
 
+    M: int = 5
+    N: int = 10
+    L: int = 12
+    K: int = 6
+
     qgen_model_path: str = "BeIR/query-gen-msmarco-t5-large-v1"
 
     @field_validator("groq_api_key")

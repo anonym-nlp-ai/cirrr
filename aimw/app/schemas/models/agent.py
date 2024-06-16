@@ -9,7 +9,6 @@ from pydantic import BaseModel
 from aimw.app.schemas.enum.ai_enums import Role
 
 
-
 class LLM(BaseModel):
     """LLM Class"""
 
@@ -19,15 +18,11 @@ class LLM(BaseModel):
     model: Any
     params: Optional[dict] = {}
 
-class Agent(BaseModel):
+
+class Agent(LLM):
     """Agent Class"""
 
-    uuid: UUID = uuid.uuid4()
     role: Role
-    ai_model_name: Optional[str] = "llama3-8b-8192"
-    version: Optional[str]
-    model: Any
-    params: Optional[dict] = {}
 
 
 class Chain(BaseModel):

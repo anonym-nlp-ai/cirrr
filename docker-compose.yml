@@ -1,0 +1,57 @@
+services:
+  proxy:
+    container_name: proxy
+    image: "proxy:v0.1.5.1"
+    build: 
+      context: ./proxy
+      dockerfile: Dockerfile
+    depends_on:
+      - aimw
+    ports:
+      - ${NGINX_PORT_MAPPINGS:-8443:8443}
+      - ${GRAFANA_PORT_MAPPINGS:-3000:3000}
+    environment:
+      - AIMW_PORT=${AIMW_PORT:-8005}
+      - NGINX_PORT=${NGINX_PORT:-8443}
+      - GRAFANA_PORT=${GRAFANA_PORT:-3000}
+      - AIMW_HOST=_
+      - SSL_CERT_NAME=server.crt # TODO: generate your cert
+      - SSL_CERT_KEY_NAME=server.key # TODO: generate your private key
+      - SSL_PASS_FILE=pass
+    logging:
+      driver: "local"
+      options:
+        max-size: "10M"
+        max-file: "14"
+    volumes:
+      - ./proxy/ssl:/etc/nginx/ssl
+    networks:
+      - nginx_network
+
+  aimw:
+    container_name: id-aimw
+    image: "cir3-aimw:v0.1.5.1"
+    build:
+      context: ./aimw
+      dockerfile: Dockerfile
+      args:
+          UID: 1001
+          GID: 1001
+          INSTALL_DEV_ARG: "false"
+    # user: "${UID}:${GID}"
+    # user: 1001:1001
+    environment:
+      - ASGIWS_PORT=8005
+      # Optional: to override ./conf/aimw_conf.env 
+      - LOGGING_LEVEL=5
+      - LOG_ROTATOR_SIZE_LIMIT=2e+8
+      - ENVIRONMENT="Containserized"
+    volumes:
+      - ./conf:/home/ai/conf
+      - ./mnt/logs:/home/ai/logs
+    networks:
+      - nginx_network
+
+networks:
+  nginx_network:
+    driver: bridge
