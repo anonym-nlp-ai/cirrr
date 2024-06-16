@@ -11,7 +11,7 @@ from typing import Any
 from app.core.log_config import LoggingSettings, setup_app_logging
 from app.services import ai_model_loader
 # from app.services.monitoring.monitoring_instrumentator import instrumentator
-from app.services.security import api_key_auth
+from aimw.app.services.security.security import api_key_auth
 from fastapi import APIRouter, Depends, FastAPI, Request, Response
 from loguru import logger
 

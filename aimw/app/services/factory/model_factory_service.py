@@ -8,10 +8,29 @@ from langchain_groq import ChatGroq
 from aimw.app.core.ai_config import get_ai_settings
 from aimw.app.resources.icl_templates import icl_cir3_templates_factory
 from aimw.app.schemas.enum.ai_enums import Role
-from aimw.app.schemas.models.agent import Agent, Chain
+from aimw.app.schemas.models.agent import Agent, Chain, LLM
 
 
 class Factory:
+
+    def create_llm(self, model_name: str, params: dict = {}) -> LLM:
+        model = LLM(
+            model_name=model_name,
+            params=params,
+            model=ChatGroq(
+                model=model_name,
+                temperature=get_ai_settings().temperature,
+                model_kwargs={
+                    "top_p": get_ai_settings().nucleus_sampling,
+                    "seed": get_ai_settings().ai_model_kwargs["seed"],
+                },
+                streaming=get_ai_settings().streaming,
+                api_key=get_ai_settings().groq_api_key,
+            ),
+        )
+        return model
+    
+    
     def create_agent(self, agent_role: Role, params: dict = {}) -> Agent:
         model_params = get_ai_settings().llm_models_info[agent_role]
         model = Agent(
