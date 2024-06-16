@@ -22,6 +22,7 @@ class CIR3Settings(BaseSettings):
 
     groq_api_key: str
     langchain_api_key: str
+    openai_api_key: str
 
     verbose: bool = Field(default=True)
     streaming: bool = Field(default=True)
