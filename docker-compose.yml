@@ -38,8 +38,7 @@ services:
           UID: 1001
           GID: 1001
           INSTALL_DEV_ARG: "false"
-    # user: "${UID}:${GID}"
-    # user: 1001:1001
+          user: "${UID}:${GID}"
     environment:
       - ASGIWS_PORT=8005
       # Optional: to override ./conf/aimw_conf.env 
