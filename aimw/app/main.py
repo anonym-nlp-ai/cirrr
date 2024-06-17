@@ -19,14 +19,14 @@ setup_app_logging(config=LoggingSettings())
 root_router = APIRouter()
 app = FastAPI(
     title=get_basic_settings().APP_NAME,
-    description="APIs to expose AI ID Capture as a service.",
+    description="APIs to expose CIR3 as a service.",
     version=get_basic_settings().APP_VERSION)
 
 
 @root_router.get(path="/", status_code=200)
 async def root():
     """Root GET Endpoint"""
-    return {"message": "ID Capture - AIMW root API"}
+    return {"message": "CIR3 - AIMW root API"}
 
 
 @app.middleware("http")
