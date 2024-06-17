@@ -26,10 +26,8 @@ async def translate_text(doc: QASet) -> QASet:
     try:
         logger.info("Started QAG ...")
         cir3Graph = Cir3Graph()
-        # Compile
-        app = cir3Graph.cir3_workflow.compile()
 
-        inputs = {
+        input = {
             "document": input_text,
             "num_steps": 0,
             "M": get_ai_settings().M,
@@ -37,10 +35,11 @@ async def translate_text(doc: QASet) -> QASet:
             "L": get_ai_settings().L,
             "K": get_ai_settings().K,
         }
-        for output in app.stream(inputs):
-            for key, value in output.items():
-                logger.info(f"Finished running: {key}:")
-        doc.qa_set = output
+
+        res = cir3Graph.topology.invoke(input=input)
+        doc.qa_set = res["final_qas"]
+        logger.debug(f"Final set of question-answer pairs: \n {doc.qa_set}")
+        
         logger.info("QAG is successful")
     except ValidationError as e:
         error_msg = e.errors()[0]["msg"]
