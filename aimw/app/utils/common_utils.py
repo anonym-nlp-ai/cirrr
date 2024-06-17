@@ -1,5 +1,6 @@
+import json
 from pathlib import Path
-from typing import Union
+from typing import Any, Union
 
 from loguru import logger
 
@@ -103,3 +104,13 @@ def write_markdown_file(content, filename):
         content = "\n".join(content)
     with open(f"./output/{filename}.md", "w") as f:
         f.write(content)
+
+
+def save_json(data: Any, dir_path: str, filename: str):
+
+    import os
+
+    # Create all necessary directories (including parent directories)
+    os.makedirs(dir_path, exist_ok=True)
+    with open(dir_path+'/'+filename, mode="w", encoding="utf-8") as json_file:
+        json.dump(data, json_file, indent=4)

@@ -31,7 +31,7 @@ class Cir3Graph:
         self.cir3_workflow.add_edge("group_inner_refine", "outer_refine")
         self.cir3_workflow.add_conditional_edges(
             "outer_refine",
-            cir3_edges.route_outer_refinenemnt,
+            cir3_edges.route_outer_refinement,
             {
                 "debate": "group_inner_refine",
                 "terminate": "halt",
@@ -40,4 +40,4 @@ class Cir3Graph:
         self.cir3_workflow.add_edge("halt", END)
 
         # Compile
-        # self.app = self.cir3_workflow.compile()
+        self.topology = self.cir3_workflow.compile()

@@ -278,10 +278,13 @@ def halt(state):
     logger.info(
         f"Step: {num_steps} - finale QAs: {outer_transactive_memory[-1]['new_curmudgeon_feedback']}"
     )
+
+    final_qas = [
+        {"question": item["question"], "answer": item["answer"]}
+        for item in outer_transactive_memory[-1]["new_curmudgeon_feedback"]
+    ]
     return {
-        "final_question_answer_list": outer_transactive_memory[-1][
-            "new_curmudgeon_feedback"
-        ],
+        "final_qas": final_qas,
         "num_steps": num_steps,
     }
 
@@ -289,10 +292,9 @@ def halt(state):
 def log_transactive_memory(state):
     """print the state"""
     logger.info("--- Transactive Memory State---")
-    
+
     inner_transactive_memory = state["inner_transactive_memory"]
     outer_transactive_memory = state["outer_transactive_memory"]
 
     logger.info(f"inner_transactive_memory: {inner_transactive_memory}")
     logger.info(f"outer_transactive_memory: {outer_transactive_memory}")
-    

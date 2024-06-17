@@ -175,7 +175,7 @@ curmudgeon_prompt = PromptTemplate(
 
     <|eot_id|><|start_header_id|>user<|end_header_id|>
 
-    Your task is to review and assess the quality of the generated question-answer pairs in relation to the original document, and taking in consederation your previous feedback (old_curmudgeon_feedback). Then, you select to {N} question-answer pairs based on the following instructions, and do not forget to add your feedback to each selected question-answer pair to ensure that they:\n
+    Your task is to review and assess the quality of the generated question-answer pairs in relation to the original document, and taking into consideration your previous feedback (old_curmudgeon_feedback). Then, you select to {N} question-answer pairs based on the following instructions, and do not forget to add your feedback to each selected question-answer pair to ensure that they:\n
         1. Are both comprehensive, diverse, grounded in the document, and free from assumptions.\n
         2. Are both semantically distinct, rather than paraphrases or redundant instances.\n
         3. Are both diverse. To assess diversity and assess redundancy, use your judgement to determine whether to provide feedback based on your own knowledge, scores from an external evaluation tool, or both. The evaluation tool scores quantify the diversity of (a) generated questions (score\_1), (b) generated answers (score\_2), and (c) concatenated answers and input document (score\_3). The objective of your feedback on diversity is to minimise score\_3, while maximising score\_1 and score\_3. To call the tool return tool_calling as true. You can call the tool only once.\n\n

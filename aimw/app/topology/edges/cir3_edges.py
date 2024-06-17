@@ -1,7 +1,7 @@
 from loguru import logger
 
 
-def route_outer_refinenemnt(state):
+def route_outer_refinement(state):
     """
     Route to writers or moderator
     Args:
@@ -10,7 +10,7 @@ def route_outer_refinenemnt(state):
         str: Next node to call
     """
 
-    logger.info("---'route_outer_refinenemnt'---")
+    logger.info("---'route_outer_refinement'---")
 
     outer_transactive_memory = state["outer_transactive_memory"]
     K = state["K"]

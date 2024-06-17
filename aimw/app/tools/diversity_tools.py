@@ -2,6 +2,11 @@ from ast import Dict, List
 
 from vendi_score import text_utils
 
+import warnings
+
+# Ignore Vendi Score Package / sklearn `UserWarning`
+warnings.simplefilter("ignore", UserWarning)
+
 
 def get_vendi_scores(sents: List) -> Dict:
     ngram_score = text_utils.ngram_vendi_score(sents=sents, ns=[1, 2])
