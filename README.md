@@ -37,6 +37,17 @@ poetry export -f requirements.txt --output requirements.txt
 pip install -r requirements.txt
 ```
 
+**Conda with minimum requirements**
+```
+pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+
+# Optional: to visualize the agents graph on Jupyter Notebook
+conda install conda-forge::pygraphviz
+
+# install minimum requirements
+pip install -r ./aimw/minimum_req.txt
+```
+
 4. Running CIR3 
 
 You can use one of the following methods:
@@ -61,3 +72,7 @@ docker-compose up --build
 ```
 
 APIs can be accessed through `OpenAPI Swagger` at `https://127.0.0.1:8443/docs`.
+
+
+
+
