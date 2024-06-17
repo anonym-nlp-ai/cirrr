@@ -33,12 +33,16 @@ poetry install
 ```sh
 conda create -n cir3 python=3.11
 conda activate cir3
+pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
 poetry export -f requirements.txt --output requirements.txt
 pip install -r requirements.txt
 ```
 
 **Conda with minimum requirements**
-```
+```sh
+conda create -n cir3 python=3.11
+conda activate cir3
+
 pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
 
 # Optional: to visualize the agents graph on Jupyter Notebook
