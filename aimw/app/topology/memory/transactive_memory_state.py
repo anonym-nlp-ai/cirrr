@@ -14,7 +14,7 @@ class GraphState(TypedDict):
         N: maximum number of question-answer pairs to be generated
         L: maximum inner-refinement cycles
         K: maximum outer-refinement cycles
-        subtopics: list of subtopics/perpectives
+        subtopics: list of subtopics/perspectives
         inner_transactive_memory: Inner transactive memory
         outer_transactive_memory: Outer transactive memory
         num_steps: all steps
