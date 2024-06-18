@@ -20,18 +20,17 @@ from aimw.app.services.factory.model_factory_service import Factory
 class Writers(Group):
     def __init__(self, moderator_response):
         self.role = Role.WRITER
-        self.count = len(moderator_response)
         self.moderator_instructions = []
         self.writers_qadraft_runnables = []
         self.writers_inner_refine_runnables = []
         self.agents_group = []
-        super().__init__(self.role, self.count, self.agents_group)
+        
 
         if isinstance(moderator_response, list) or isinstance(moderator_response, dict):
             if isinstance(moderator_response, dict):
                 moderator_response = moderator_response["writers_instructions"]
-
-
+            self.count = len(moderator_response)
+            super().__init__(self.role, self.count, self.agents_group)
             for i, moderation in enumerate(moderator_response):
                 self.agents_group.append(
                     self.factory.create_agent(

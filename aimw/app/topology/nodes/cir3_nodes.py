@@ -40,8 +40,8 @@ def moderate_writers(state):
 
     moderator_response = runnable_system.runnable_cir3.moderator_runnable.invoke(
         {
-            "M": 3,
-            "N": 5,
+            "M": M,
+            "N": N,
             "document": document,
             "subtopics": subtopics,
             "moderator_examplar": icl_cir3_templates.moderator_examplar,
@@ -221,14 +221,15 @@ def outer_refine(state):
         logger.debug(f"questions: {questions}")
         logger.debug(f"answers: {answers}")
 
-        vendi_q = diversity_tools.get_vendi_scores(questions)["bert_score"]
-        vendi_a = diversity_tools.get_vendi_scores(answers)["bert_score"]
-        vendi_ca = diversity_tools.get_vendi_scores([" ".join(answers), document])[
-            "bert_score"
-        ]
-        logger.info(f"vendi_q: {vendi_q}")
-        logger.info(f"vendi_a: {vendi_a}")
-        logger.info(f"vendi_ca: {vendi_ca}")
+        vendi_q = diversity_tools.get_vendi_scores(questions, "bge")["bge_score"]
+        vendi_a = diversity_tools.get_vendi_scores(answers, "bge")["bge_score"]
+        vendi_ca = diversity_tools.get_vendi_scores(
+            [" ".join(answers), document], "bge"
+        )["bge_score"]
+
+        logger.debug(f"vendi_q: {vendi_q}")
+        logger.debug(f"vendi_a: {vendi_a}")
+        logger.debug(f"vendi_ca: {vendi_ca}")
 
         vendi_scores = {"score_1": vendi_q, "score_2": vendi_a, "score_3": vendi_ca}
 
@@ -241,7 +242,7 @@ def outer_refine(state):
         curmudgeon_response = runnable_system.runnable_cir3.curmudgeon_runnable.invoke(
             {
                 "document": document,
-                "N": 5,
+                "N": N,
                 "question_answer_list": inner_transactive_memory[-1][0],
                 "old_curmudgeon_feedback": old_curmudgeon_feedback,
                 "diversity_scores": vendi_scores,

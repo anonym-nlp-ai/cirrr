@@ -61,9 +61,10 @@ You can use one of the following methods:
     * `./re/gen/cir3_step-by-step_demo.ipynb`
 * Python script:
     ```sh
-    python .\run_cir3.py --output-dir your_out_directory
+    cd ./quick-run
+    python ./run_cir3.py --output-dir your_out_directory
     # Or simply
-    python .\run_cir3.py 
+    python ./run_cir3.py 
     ```
 
 * [Optional] Containerization (under development):

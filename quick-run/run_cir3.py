@@ -29,7 +29,7 @@ def main(args):
         throughout their life, particularly during retirement."
 
     logger.info("Starting CIR3 ...")
-    inputs = {"document": document, "num_steps": 0, "M": 7, "N": 10, "L": 3, "K": 5}
+    inputs = {"document": document, "num_steps": 0, "M": 7, "N": 8, "L": 3, "K": 4}
     output = cir3Graph.topology.invoke(inputs)
     logger.info(f"Final set of question-answer pairs: \n {output['final_qas']}")
 

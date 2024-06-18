@@ -28,7 +28,7 @@ class CIR3Settings(BaseSettings):
     streaming: bool = Field(default=True)
     max_tokens: int = Field(default=5000)
 
-    ai_model_kwargs: dict = Field(default={"seed": 178})
+    ai_model_kwargs: dict = Field(default={"seed": 201})
 
     M: int = 5
     N: int = 10
