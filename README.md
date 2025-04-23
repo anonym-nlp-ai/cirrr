@@ -1,4 +1,7 @@
-# **CIR3**: Effective QA Generation through Group Coordination and Efficient Communication in LLM-based Multiagent Systems
+# **CIR3**: Improving QA Generation via Efficient Communication in Multiagent LLM Systems
+
+Highlights:
+- Effective QA Generation through Group Coordination and Efficient Communication in LLM-based Multiagent Systems
 
 ## Overview
 **C**ollective **I**ntentional **R**eading through **R**eflection and **R**efinement (**CIR3**), a question-answer generator that leverages a collaborative and systematic process emphasizing in-depth engagement with the input text. CIR3 is a novel system designed to generate comprehensive and truthful set of QA pairs from information-dense documents. The core idea of CIR3 lies in its efficient flow of information, which employs LLM-based agents to conduct an in-depth analysis of the input context. This is achieved through a combination of transactive reasoning, multi-perspective assessment, and a balanced collective convergence process.
