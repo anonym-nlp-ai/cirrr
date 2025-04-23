@@ -15,7 +15,6 @@ from loguru import logger
 # setup logging as early as possible
 setup_app_logging(config=LoggingSettings())
 
-
 root_router = APIRouter()
 app = FastAPI(
     title=get_basic_settings().APP_NAME,
