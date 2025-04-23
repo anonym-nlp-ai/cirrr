@@ -1,4 +1,4 @@
-FROM nginx:1.23.2-alpine
+FROM nginx:1.27.5-alpine
 
 COPY ./conf.d/default.conf.template /etc/nginx/conf.d/default.conf.template
 
