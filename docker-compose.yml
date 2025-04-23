@@ -1,7 +1,7 @@
 services:
   proxy:
     container_name: proxy
-    image: "proxy:v0.1.5.1"
+    image: "proxy:v0.1.5.2"
     build: 
       context: ./proxy
       dockerfile: Dockerfile
