@@ -230,6 +230,7 @@ def outer_refine(state):
         # TODO: externalize `alpha_qa` and `alpha_ca`
         alpha_qa = 0.5
         alpha_ca = 0.5
+        # Empirically, SimCSE produces similarity scores in the range of 1 to 2, with 1 indicating perfect similarity, typically observed between a given context and its corresponding concatenated answers.
         combined_vendi_score = ((alpha_qa / 2) * (vendi_q + vendi_a)) + alpha_ca * (1 - vendi_ca)
 
         logger.debug(f"vendi_q: {vendi_q}")
