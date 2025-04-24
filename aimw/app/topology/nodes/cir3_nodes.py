@@ -227,11 +227,22 @@ def outer_refine(state):
             [" ".join(answers), document], "simcse_score"
         )["simcse_score"]
 
+        # TODO: externalize `alpha_qa` and `alpha_ca`
+        alpha_qa = 0.5
+        alpha_ca = 0.5
+        combined_vendi_score = ((alpha_qa / 2) * (vendi_q + vendi_a)) + alpha_ca * (1 - vendi_ca)
+
         logger.debug(f"vendi_q: {vendi_q}")
         logger.debug(f"vendi_a: {vendi_a}")
         logger.debug(f"vendi_ca: {vendi_ca}")
+        logger.debug(f"combined_vendi_score: {combined_vendi_score}")
 
-        vendi_scores = {"score_1": vendi_q, "score_2": vendi_a, "score_3": vendi_ca}
+        vendi_scores = {
+            "score_1": vendi_q,
+            "score_2": vendi_a,
+            "score_3": vendi_ca,
+            "combined_score": combined_vendi_score
+        }
 
         old_curmudgeon_feedback = (
             outer_transactive_memory[-1]
