@@ -221,11 +221,11 @@ def outer_refine(state):
         logger.debug(f"questions: {questions}")
         logger.debug(f"answers: {answers}")
 
-        vendi_q = diversity_tools.get_vendi_scores(questions, "bge")["bge_score"]
-        vendi_a = diversity_tools.get_vendi_scores(answers, "bge")["bge_score"]
+        vendi_q = diversity_tools.get_vendi_scores(questions, "simcse_score")["simcse_score"]
+        vendi_a = diversity_tools.get_vendi_scores(answers, "simcse_score")["simcse_score"]
         vendi_ca = diversity_tools.get_vendi_scores(
-            [" ".join(answers), document], "bge"
-        )["bge_score"]
+            [" ".join(answers), document], "simcse_score"
+        )["simcse_score"]
 
         logger.debug(f"vendi_q: {vendi_q}")
         logger.debug(f"vendi_a: {vendi_a}")
