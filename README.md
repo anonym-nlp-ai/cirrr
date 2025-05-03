@@ -1,4 +1,4 @@
-# **CIR3**: Improving QA Generation via Efficient Communication in Multiagent LLM Systems
+# **CIR3**: Coordinated LLM Multi-Agent Systems for Collaborative Question-Answer Generation
 
 Highlights:
 - Effective QA Generation through Group Coordination and Efficient Communication in LLM-based Multiagent Systems
