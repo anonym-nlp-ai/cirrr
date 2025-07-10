@@ -1,0 +1,287 @@
+groups:
+  - name: vllm_availability
+    rules:
+      - alert: VLLMServiceDown
+        expr: up{job="vllm"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: vllm
+        annotations:
+          summary: "vLLM service is down"
+          description: "vLLM service has been down for more than 1 minute"
+          runbook_url: "https://wiki.company.com/runbooks/vllm-down"
+
+      - alert: VLLMHealthCheckFailing
+        expr: cir3_health_checks_total{component="vllm",status="unhealthy"} > 0
+        for: 2m
+        labels:
+          severity: warning
+          component: vllm
+        annotations:
+          summary: "vLLM health checks are failing"
+          description: "vLLM health checks have been failing for more than 2 minutes"
+
+      - alert: VLLMCircuitBreakerOpen
+        expr: cir3_circuit_breaker_state == 2
+        for: 30s
+        labels:
+          severity: critical
+          component: vllm
+        annotations:
+          summary: "vLLM circuit breaker is open"
+          description: "vLLM circuit breaker has been open for more than 30 seconds, indicating service unavailability"
+
+  - name: vllm_performance
+    rules:
+      - alert: VLLMHighLatency
+        expr: histogram_quantile(0.95, rate(vllm:e2e_request_latency_seconds_bucket[5m])) > 10
+        for: 3m
+        labels:
+          severity: warning
+          component: vllm
+        annotations:
+          summary: "vLLM request latency is high"
+          description: "95th percentile latency is {{ $value }}s, which is above the 10s threshold"
+
+      - alert: VLLMVeryHighLatency
+        expr: histogram_quantile(0.95, rate(vllm:e2e_request_latency_seconds_bucket[5m])) > 30
+        for: 1m
+        labels:
+          severity: critical
+          component: vllm
+        annotations:
+          summary: "vLLM request latency is critically high"
+          description: "95th percentile latency is {{ $value }}s, which is above the 30s critical threshold"
+
+      - alert: VLLMHighErrorRate
+        expr: rate(cir3_vllm_requests_total{status="error"}[5m]) / rate(cir3_vllm_requests_total[5m]) > 0.1
+        for: 2m
+        labels:
+          severity: warning
+          component: vllm
+        annotations:
+          summary: "vLLM error rate is high"
+          description: "Error rate is {{ $value | humanizePercentage }}, which is above the 10% threshold"
+
+      - alert: VLLMVeryHighErrorRate
+        expr: rate(cir3_vllm_requests_total{status="error"}[5m]) / rate(cir3_vllm_requests_total[5m]) > 0.25
+        for: 1m
+        labels:
+          severity: critical
+          component: vllm
+        annotations:
+          summary: "vLLM error rate is critically high"
+          description: "Error rate is {{ $value | humanizePercentage }}, which is above the 25% critical threshold"
+
+      - alert: VLLMThroughputDrop
+        expr: rate(cir3_vllm_requests_total[5m]) < 0.1
+        for: 5m
+        labels:
+          severity: warning
+          component: vllm
+        annotations:
+          summary: "vLLM request throughput is low"
+          description: "Request rate is {{ $value }} req/s, which is below expected throughput"
+
+  - name: vllm_resources
+    rules:
+      - alert: VLLMHighCPUUsage
+        expr: rate(container_cpu_usage_seconds_total{name="vllm"}[5m]) * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+          component: vllm
+        annotations:
+          summary: "vLLM container CPU usage is high"
+          description: "CPU usage is {{ $value }}%, which is above the 80% threshold"
+
+      - alert: VLLMHighMemoryUsage
+        expr: (container_memory_usage_bytes{name="vllm"} / container_spec_memory_limit_bytes{name="vllm"}) * 100 > 85
+        for: 3m
+        labels:
+          severity: warning
+          component: vllm
+        annotations:
+          summary: "vLLM container memory usage is high"
+          description: "Memory usage is {{ $value }}%, which is above the 85% threshold"
+
+      - alert: VLLMOutOfMemory
+        expr: (container_memory_usage_bytes{name="vllm"} / container_spec_memory_limit_bytes{name="vllm"}) * 100 > 95
+        for: 1m
+        labels:
+          severity: critical
+          component: vllm
+        annotations:
+          summary: "vLLM container is running out of memory"
+          description: "Memory usage is {{ $value }}%, which is above the 95% critical threshold"
+
+      - alert: VLLMGPUMemoryHigh
+        expr: nvidia_ml_py_memory_used_bytes / nvidia_ml_py_memory_total_bytes > 0.9
+        for: 3m
+        labels:
+          severity: warning
+          component: vllm
+        annotations:
+          summary: "vLLM GPU memory usage is high"
+          description: "GPU memory usage is {{ $value | humanizePercentage }}, which is above the 90% threshold"
+
+  - name: cir3_application
+    rules:
+      - alert: CIR3QAGenerationFailureRate
+        expr: rate(cir3_qa_generation_total{status="error"}[5m]) / rate(cir3_qa_generation_total[5m]) > 0.2
+        for: 2m
+        labels:
+          severity: warning
+          component: cir3
+        annotations:
+          summary: "CIR3 QA generation failure rate is high"
+          description: "QA generation failure rate is {{ $value | humanizePercentage }}, which is above the 20% threshold"
+
+      - alert: CIR3LowThroughput
+        expr: rate(cir3_qa_generation_total[5m]) < 0.01
+        for: 10m
+        labels:
+          severity: warning
+          component: cir3
+        annotations:
+          summary: "CIR3 QA generation throughput is low"
+          description: "QA generation rate is {{ $value }} req/s, which is below expected levels"
+
+      - alert: CIR3AgentInteractionFailures
+        expr: rate(cir3_agent_interactions_total{status="error"}[5m]) > 0.1
+        for: 3m
+        labels:
+          severity: warning
+          component: cir3
+        annotations:
+          summary: "CIR3 agent interactions are failing"
+          description: "Agent interaction failure rate is {{ $value }} failures/s"
+
+      - alert: CIR3ConsensusRoundsHigh
+        expr: histogram_quantile(0.95, rate(cir3_consensus_rounds_bucket[5m])) > 10
+        for: 5m
+        labels:
+          severity: warning
+          component: cir3
+        annotations:
+          summary: "CIR3 consensus rounds are taking too long"
+          description: "95th percentile consensus rounds is {{ $value }}, indicating potential convergence issues"
+
+      - alert: CIR3RequestProcessingTime
+        expr: histogram_quantile(0.95, rate(cir3_request_duration_seconds_bucket[5m])) > 300
+        for: 2m
+        labels:
+          severity: warning
+          component: cir3
+        annotations:
+          summary: "CIR3 request processing time is high"
+          description: "95th percentile processing time is {{ $value }}s, which is above the 5-minute threshold"
+
+  - name: infrastructure
+    rules:
+      - alert: PrometheusDown
+        expr: up{job="prometheus"} == 0
+        for: 30s
+        labels:
+          severity: critical
+          component: monitoring
+        annotations:
+          summary: "Prometheus is down"
+          description: "Prometheus instance has been down for more than 30 seconds"
+
+      - alert: HighMemoryUsage
+        expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes > 0.9
+        for: 2m
+        labels:
+          severity: warning
+          component: infrastructure
+        annotations:
+          summary: "Host memory usage is high"
+          description: "Memory usage is {{ $value | humanizePercentage }}, which is above the 90% threshold"
+
+      - alert: HighDiskUsage
+        expr: (node_filesystem_size_bytes - node_filesystem_avail_bytes) / node_filesystem_size_bytes > 0.85
+        for: 1m
+        labels:
+          severity: warning
+          component: infrastructure
+        annotations:
+          summary: "Host disk usage is high"
+          description: "Disk usage on {{ $labels.mountpoint }} is {{ $value | humanizePercentage }}, which is above the 85% threshold"
+
+      - alert: HighLoadAverage
+        expr: node_load15 > node_nprocs * 1.5
+        for: 5m
+        labels:
+          severity: warning
+          component: infrastructure
+        annotations:
+          summary: "Host load average is high"
+          description: "15-minute load average is {{ $value }}, which is 1.5x higher than the number of CPUs"
+
+  - name: security
+    rules:
+      - alert: UnauthorizedAPIAccess
+        expr: rate(cir3_requests_total{status_code=~"401|403"}[5m]) > 0.1
+        for: 1m
+        labels:
+          severity: warning
+          component: security
+        annotations:
+          summary: "High rate of unauthorized API access attempts"
+          description: "Unauthorized access rate is {{ $value }} req/s, indicating potential security issue"
+
+      - alert: APIRateLimitExceeded
+        expr: rate(cir3_requests_total{status_code="429"}[5m]) > 0.5
+        for: 2m
+        labels:
+          severity: warning
+          component: security
+        annotations:
+          summary: "API rate limit frequently exceeded"
+          description: "Rate limit exceeded {{ $value }} times/s, indicating potential abuse or misconfiguration"
+
+  - name: data_quality
+    rules:
+      - alert: LowQualityQAPairs
+        expr: avg(cir3_qa_pairs_total / cir3_qa_generation_total{status="success"}) < 3
+        for: 5m
+        labels:
+          severity: warning
+          component: cir3
+        annotations:
+          summary: "Low quality QA pair generation"
+          description: "Average QA pairs per successful request is {{ $value }}, which is below expected quality threshold"
+
+      - alert: DocumentProcessingSizeAnomaly
+        expr: histogram_quantile(0.95, rate(cir3_document_length_chars_bucket[10m])) > 100000
+        for: 3m
+        labels:
+          severity: info
+          component: cir3
+        annotations:
+          summary: "Unusually large documents being processed"
+          description: "95th percentile document size is {{ $value }} chars, which may impact performance"
+
+  - name: business_metrics
+    rules:
+      - alert: LowDailyActiveUsers
+        expr: increase(cir3_requests_total[24h]) < 100
+        for: 0s
+        labels:
+          severity: info
+          component: business
+        annotations:
+          summary: "Low daily request volume"
+          description: "Only {{ $value }} requests in the last 24 hours, which is below expected usage"
+
+      - alert: TokenUsageSpike
+        expr: rate(cir3_vllm_tokens_total[5m]) > 1000
+        for: 2m
+        labels:
+          severity: info
+          component: cost
+        annotations:
+          summary: "High token usage detected"
+          description: "Token usage rate is {{ $value }} tokens/s, which may impact costs" 

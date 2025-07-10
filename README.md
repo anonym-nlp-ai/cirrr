@@ -92,52 +92,9 @@ docker-compose up --build
 
 APIs can be accessed through `OpenAPI Swagger` at `https://127.0.0.1:8443/docs`.
 
-# Note
-If you wish to run the framework using commercial providers (Anthropic, OpenAI, Groq), please check their respective pricing pages:
-
-- [OpenAI Pricing](https://platform.openai.com/docs/pricing)
-- [Anthropic Pricing](https://www.anthropic.com/pricing#api)
-- [Groq Pricing](https://groq.com/pricing/)
 
 
-# TODO
-
-- add vllm via docker-compose + instrumnentation + docs
-- amend .envs
-- writers heterougenous: aimw/app/schemas/models/decentralized_agents_group.py
-- load vendi models only once
-- compress the inner state memory: keep last qas only in a list
-- Review the doc.
-
-
-combined_vendi_score: {'score_q': 2.7691658, 'score_a': 2.721003, 'score_ca': 1.1520605, 'balanced_g_score': 1.2965118885040283, 'comp_diversity_score': 1.372542142868042, 'faith_alignment_score': -0.07603025436401367}
-
-combined_vendi_score: {'score_q': 3.1531253, 'score_a': 2.9122965, 'score_ca': 1.1676774, 'balanced_g_score': 1.4325168132781982, 'comp_diversity_score': 1.5163555145263672, 'faith_alignment_score': -0.08383870124816895}
-
-
-
-
-
-# INFO: homogeneous writers require a dict, and heterogeneous writers setup requires a list, however, you can can also trandform a heterogeneous setup to homogeneous setup by provider a list of the same model type, where the list can contain one or more models of the same type. Future version will remove homogeneous setup as a dict. 
-
-# NOTE: Specific requirements per model (speciality, personality, finetuned, etc.) for heterogeneous writers can be implemented here + by amending .env file.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# LLM Usage in CIR3
-
-## Overview
+## LLM Usage in CIR3
 CIR3 supports multiple LLM providers and configurations for different agent roles. The system is designed to be flexible, allowing both homogeneous (same model type) and heterogeneous (different model types) setups for the writer agents.
 
 ## Supported LLM Providers
@@ -147,18 +104,18 @@ CIR3 supports multiple LLM providers and configurations for different agent role
    - Configuration: Requires `groq_api_key` in `conf/ai-core_conf.env`
 
 2. **OpenAI**
-   - Models: gpt-4o-mini
+   - Models: gpt-4o-mini, gpt-4o
    - Configuration: Requires `openai_api_key` in `conf/ai-core_conf.env`
 
 3. **Anthropic**
-   - Models: claude-3-7-sonnet-20250219
+   - Models: claude-3-7-sonnet-20250219, claude-sonnet-4-20250514
    - Configuration: Requires `anthropic_api_key` in `conf/ai-core_conf.env`
 
 4. **Self-hosted VLLM**
    - Models: google/gemma-3-27b-it
    - Configuration: Requires VLLM server setup
 
-## Configuration
+## LLM Configuration
 
 The LLM configuration is managed through the `llm_models_info` setting in `conf/ai-core_conf.env`. This setting supports both homogeneous and heterogeneous setups.
 
@@ -180,21 +137,14 @@ The LLM configuration is managed through the `llm_models_info` setting in `conf/
     "writer": [
         {"provider": "groq", "ai_model_name": "llama3-8b-8192", "version": "0.0.1"},
         {"provider": "openai", "ai_model_name": "gpt-4o-mini", "version": "0.0.1"},
+        {"provider": "openai", "ai_model_name": "gpt-4o", "version": "0.0.1"},
         {"provider": "anthropic", "ai_model_name": "claude-3-7-sonnet-20250219", "version": "0.0.1"},
+        {"provider": "anthropic", "ai_model_name": "claude-sonnet-4-20250514", "version": "0.0.1"},
         {"provider": "self-hosted-vllm", "ai_model_name": "google/gemma-3-27b-it", "version": "0.0.1"}
     ],
     "curmudgeon": {"provider": "openai", "ai_model_name": "gpt-4o-mini", "version": "0.0.1"}
 }
 ```
-
-## Model Templates
-
-Each provider has its own prompt template format:
-
-- **Llama3**: `<|begin_of_text|><|start_header_id|>system<|end_header_id|>{system_message}<|eot_id|><|start_header_id|>user<|end_header_id|>{user_prompt}<|eot_id|><|start_header_id|>assistant<|end_header_id|>`
-- **Gemma3**: `<start_of_turn>user{system_message}{user_prompt}<end_of_turn><start_of_turn>model`
-- **OpenAI**: `{system_message}{user_prompt}`
-- **Claude**: `<system>{system_message}</system><user>{user_prompt}</user><assistant>`
 
 ## Important Notes
 
@@ -230,4 +180,49 @@ Each provider has its own prompt template format:
 3. **Performance Monitoring**:
    - Monitor API usage and costs
    - Track model performance and response times
-   - Adjust configurations based on performance metrics 
+   - Adjust configurations based on performance metrics
+
+## Running and Monitoring vLLM
+
+### Quick Start
+Deploy vLLM with monitoring in production:
+
+```sh
+# 1. Deploy vLLM service
+cd vllm-serve-engine-api
+docker-compose up -d
+
+# 2. Deploy monitoring stack
+cd ../instrumentation
+docker-compose up -d
+
+# 3. Verify deployment
+curl -k -H "Authorization: Bearer your-api-key" https://localhost:7654/health
+curl https://localhost:9054/metrics
+```
+
+### Monitoring Dashboard
+- **Grafana**: http://localhost:3000 (admin/admin123)
+- **Prometheus**: http://localhost:9054
+- **Jaeger Tracing**: http://localhost:16686
+
+### Health Checks
+```python
+from aimw.app.services.vllm.health_check import get_health_checker
+
+# Comprehensive health monitoring
+checker = get_health_checker()
+result = await checker.comprehensive_health_check()
+print(f"Status: {result.status}, Uptime: {result.uptime_seconds}s")
+```
+
+### Documentation
+- **📋 Operations Runbook**: [docs/operations/vllm-runbook.md](docs/operations/vllm-runbook.md) - Complete operational guide with troubleshooting
+- **📊 Monitoring Setup**: [docs/monitoring/setup-guide.md](docs/monitoring/setup-guide.md) - Production monitoring deployment guide
+- **🔧 Configuration**: [vllm-serve-engine-api/README.md](vllm-serve-engine-api/README.md) - vLLM server configuration details
+
+### Key Features
+- **Circuit Breaker**: Automatic fault tolerance with retry mechanisms
+- **Batch Processing**: Intelligent request batching for optimal throughput  
+- **Performance Profiling**: CPU, memory, and GPU monitoring
+- **Comprehensive Alerts**: 40+ monitoring rules for production reliability
