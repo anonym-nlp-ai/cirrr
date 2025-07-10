@@ -112,8 +112,8 @@ def setup_app_logging(config: LoggingSettings) -> None:
 
     logger.add(file_log_path, rotation=rotator.should_rotate)
 
-    # logger.add(f"file_{date.today()}.log",
-    #            rotation="11:59:59", compression="zip", enqueue=True)
+    logger.add(f"file_{datetime.datetime.now().strftime("%Y%m%d")}.log",
+               rotation="11:59:59", compression="zip", enqueue=True)
 
 
 @lru_cache()

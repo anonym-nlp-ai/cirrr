@@ -1,0 +1,203 @@
+# vLLM Server Configuration Parameters
+
+
+# Basic Server Configuration
+api-key: "cir3-UGNgXMood5ZzTpnhgURnuNELpDPxOkZd7mcyl7EIwBnpulRzYjNNPq6hr0ZDEs2WjKbdETwZc3exTRni7r350m3urfzO0F0ZwuLAY822qHXHJUnl5Q8DSkRguEJdhi1k"  # AMENDED: API key for authentication. If provided, the server will require this key to be presented in the header
+enable-auto-tool-choice: true  # AMENDED: Enable auto tool choice for supported models
+root-path: "https://127.0.0.1:7654"  # AMENDED: FastAPI root_path when app is behind a path based routing proxy
+ssl-certfile: "/root/conf/ssl/server.crt"  # AMENDED: The file path to the SSL cert file
+ssl-keyfile: "/root/conf/ssl/server.key"  # AMENDED: The file path to the SSL key file
+tool-call-parser: "pythonic"  # AMENDED: Select the tool call parser depending on the model
+uvicorn-log-level: "debug"  # Log level for uvicorn
+
+# Model Configuration
+dtype: "auto"  # Data type for model weights and activations
+hf-token: "hf_YOUR_HF_TOKEN_FOR_GATED_MODELS"  # AMENDED: The token to use as HTTP bearer authorization for remote files
+served-model-name: "google/gemma-3-27b-it"  # AMENDED: The model name(s) used in the API
+config-format: "auto"
+
+# Parallel Configuration
+disable-custom-all-reduce: true  # Disable the custom all-reduce kernel. #AMENDED: true. Please enable for Fabric Manager on two PCIe-only GPUs.
+tensor-parallel-size: 4  # AMENDED: Number of tensor parallel groups
+
+# Cache Configuration
+cpu-offload-gb: 0  # The space in GiB to offload to CPU, per GPU
+gpu-memory-utilization: 0.9  # The fraction of GPU memory to be used
+kv-cache-dtype: "auto"  # Data type for kv cache storage
+prefix-caching-hash-algo: "builtin"  # Hash algorithm for prefix caching
+swap-space: 4  # Size of the CPU swap space per GPU (in GiB)
+
+# Scheduler Configuration
+cuda-graph-sizes: 512  # Cuda graph capture sizes
+
+
+
+
+
+# # Basic Server Configuration
+# model-tag: null  # The model tag to serve (optional if specified in config)
+# allow-credentials: false  # Allow credentials
+# allowed-headers: ["*"]  # Allowed headers
+# allowed-methods: ["*"]  # Allowed methods
+# allowed-origins: ["*"]  # Allowed origins
+# api-key: "53c20c3c-5d35-4fd7-a513-98989d183ae1"  # AMENDED: API key for authentication. If provided, the server will require this key to be presented in the header
+# chat-template: null  # The file path to the chat template, or the template in single-line form for the specified model
+# chat-template-content-format: "auto"  # The format to render message content within a chat template ("string" or "openai")
+# # config: ""  # Read CLI options from a config file (YAML format)
+# data-parallel-start-rank: 0  # Starting data parallel rank for secondary nodes
+# disable-fastapi-docs: false  # Disable FastAPI's OpenAPI schema, Swagger UI, and ReDoc endpoint
+# disable-frontend-multiprocessing: false  # Run the OpenAI frontend server in the same process as the model serving engine
+# disable-log-requests: false  # Disable logging requests
+# disable-log-stats: false  # Disable logging statistics
+# disable-uvicorn-access-log: false  # Disable uvicorn access log
+# enable-auto-tool-choice: true  # AMENDED: Enable auto tool choice for supported models
+# enable-prompt-tokens-details: false  # Enable prompt_tokens_details in usage
+# enable-request-id-headers: false  # Add X-Request-Id header to responses
+# enable-server-load-tracking: false  # Enable tracking server_load_metrics in the app state
+# enable-ssl-refresh: false  # Refresh SSL Context when SSL certificate files change
+# headless: false  # Run in headless mode
+# host: null  # Host name
+# lora-modules: null  # LoRA module configurations
+# max-log-len: null  # Max number of prompt characters or prompt ID numbers being printed in log
+# middleware: []  # Additional ASGI middleware to apply to the app
+# port: 8000  # Port number
+# prompt-adapters: null  # Prompt adapter configurations
+# response-role: "assistant"  # The role name to return if request.add_generation_prompt=true
+# return-tokens-as-token-ids: false  # Represent single tokens as strings of the form 'token_id:{token_id}'
+# root-path: "https://127.0.0.1:7654"  # AMENDED: FastAPI root_path when app is behind a path based routing proxy
+# ssl-ca-certs: null  # The CA certificates file
+# ssl-cert-reqs: 0  # Whether client certificate is required
+# ssl-certfile: "/root/conf/ssl/fullchain.pem"  # AMENDED: The file path to the SSL cert file
+# ssl-keyfile: "/root/conf/ssl/privkey.pem"  # AMENDED: The file path to the SSL key file
+# tool-call-parser: "pythonic"  # AMENDED: Select the tool call parser depending on the model
+# tool-parser-plugin: ""  # Special the tool parser plugin
+# uvicorn-log-level: "info"  # Log level for uvicorn
+
+# # Model Configuration
+# allowed-local-media-path: ""  # Allowing API requests to read local images or videos
+# code-revision: null  # The specific revision to use for the model code on the Hugging Face Hub
+# config-format: "auto"  # The format of the model config to load ("auto", "hf", or "mistral")
+# disable-async-output-proc: false  # Disable async output processing
+# disable-cascade-attn: false  # Disable cascade attention for V1
+# disable-sliding-window: false  # Whether to disable sliding window
+# dtype: "auto"  # Data type for model weights and activations
+# enable-prompt-embeds: false  # Enable passing text embeddings as inputs via prompt_embeds
+# enable-sleep-mode: false  # Enable sleep mode for the engine
+# enforce-eager: false  # Whether to always use eager-mode PyTorch
+# generation-config: "auto"  # The folder path to the generation config
+# hf-config-path: null  # Name or path of the Hugging Face config to use
+# hf-overrides: {}  # Arguments to be forwarded to the Hugging Face config
+# hf-token: "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"  # AMENDED: The token to use as HTTP bearer authorization for remote files
+# logits-processor-pattern: null  # Optional regex pattern specifying valid logits processor qualified names
+# max-logprobs: 20  # Maximum number of log probabilities to return
+# max-model-len: null  # Model context length (prompt and output)
+# max-seq-len-to-capture: 8192  # Maximum sequence len covered by CUDA graphs
+# model-impl: "auto"  # Which implementation of the model to use
+# override-generation-config: {}  # Overrides or sets generation config
+# override-neuron-config: {}  # Initialize non-default neuron config
+# override-pooler-config: null  # Initialize non-default pooling config
+# quantization: null  # Method used to quantize the weights
+# revision: null  # The specific model version to use
+# rope-scaling: {}  # RoPE scaling configuration
+# rope-theta: null  # RoPE theta
+# seed: null  # Random seed for reproducibility
+# served-model-name: "google/gemma-3-27b-it"  # AMENDED: The model name(s) used in the API
+# skip-tokenizer-init: false  # Skip initialization of tokenizer and detokenizer
+# task: "auto"  # The task to use the model for
+# tokenizer: null  # Name or path of the Hugging Face tokenizer to use
+# tokenizer-mode: "auto"  # Tokenizer mode
+# tokenizer-revision: null  # The specific revision to use for the tokenizer
+# trust-remote-code: false  # Trust remote code when downloading the model and tokenizer
+
+# # Load Configuration
+# download-dir: null  # Directory to download and load the weights
+# ignore-patterns: null  # The list of patterns to ignore when loading the model
+# load-format: "auto"  # The format of the model weights to load
+# model-loader-extra-config: {}  # Extra config for model loader
+# pt-load-map-location: "cpu"  # The map location for loading pytorch checkpoint
+# use-tqdm-on-load: true  # Whether to enable tqdm for showing progress bar
+
+# # Decoding Configuration
+# guided-decoding-backend: "auto"  # Engine for guided decoding
+# guided-decoding-disable-additional-properties: false  # Disable additionalProperties in JSON schema
+# guided-decoding-disable-any-whitespace: false  # Disable whitespace during guided decoding
+# guided-decoding-disable-fallback: false  # Disable fallback to different backend
+# reasoning-parser: ""  # Select the reasoning parser
+
+# # Parallel Configuration
+# data-parallel-address: null  # Address of data parallel cluster head-node
+# data-parallel-rpc-port: null  # Port for data parallel RPC communication
+# data-parallel-size: 1  # Number of data parallel groups
+# data-parallel-size-local: null  # Number of data parallel replicas to run on this node
+# disable-custom-all-reduce: true  # Disable the custom all-reduce kernel. #AMENDED: true. Please enable for Fabric Manager on two PCIe-only GPUs.
+# distributed-executor-backend: null  # Backend for distributed model workers
+# enable-expert-parallel: false  # Use expert parallelism for MoE layers
+# max-parallel-loading-workers: null  # Maximum number of parallel loading workers
+# pipeline-parallel-size: 1  # Number of pipeline parallel groups
+# ray-workers-use-nsight: false  # Whether to profile Ray workers with nsight
+# tensor-parallel-size: 4  # AMENDED: Number of tensor parallel groups
+# worker-cls: "auto"  # The worker class to use
+# worker-extension-cls: ""  # The worker extension class to use
+
+# # Cache Configuration
+# block-size: null  # Size of a contiguous cache block in number of tokens
+# calculate-kv-scales: false  # Enable dynamic calculation of k_scale and v_scale
+# cpu-offload-gb: 0  # The space in GiB to offload to CPU, per GPU
+# enable-prefix-caching: null  # Whether to enable prefix caching
+# gpu-memory-utilization: 0.9  # The fraction of GPU memory to be used
+# kv-cache-dtype: "auto"  # Data type for kv cache storage
+# num-gpu-blocks-override: null  # Number of GPU blocks to use
+# prefix-caching-hash-algo: "builtin"  # Hash algorithm for prefix caching
+# swap-space: 4  # Size of the CPU swap space per GPU (in GiB)
+
+# # MultiModal Configuration
+# disable-mm-preprocessor-cache: false  # Disable caching of processed multi-modal inputs
+# limit-mm-per-prompt: {}  # Maximum number of input items allowed per prompt for each modality
+# mm-processor-kwargs: null  # Overrides for the multi-modal processor
+
+# # LoRA Configuration
+# enable-lora: null  # Enable handling of LoRA adapters
+# enable-lora-bias: false  # Enable bias for LoRA adapters
+# fully-sharded-loras: false  # Use fully sharded layers
+# long-lora-scaling-factors: null  # Multiple scaling factors for LoRA adapters
+# lora-dtype: "auto"  # Data type for LoRA
+# lora-extra-vocab-size: 256  # Maximum size of extra vocabulary
+# max-cpu-loras: null  # Maximum number of LoRAs to store in CPU memory
+# max-lora-rank: 16  # Max LoRA rank
+# max-loras: 1  # Max number of LoRAs in a single batch
+
+# # PromptAdapter Configuration
+# enable-prompt-adapter: null  # Enable handling of PromptAdapters
+# max-prompt-adapter-token: 0  # Max number of PromptAdapters tokens
+# max-prompt-adapters: 1  # Max number of PromptAdapters in a batch
+
+# # Speculative Configuration
+# speculative-config: null  # The configurations for speculative decoding
+
+# # Observability Configuration
+# collect-detailed-traces: null  # Collect detailed traces for specified modules
+# otlp-traces-endpoint: null  # Target URL for OpenTelemetry traces
+# show-hidden-metrics-for-version: null  # Enable deprecated Prometheus metrics
+
+# # Scheduler Configuration
+# cuda-graph-sizes: [512]  # Cuda graph capture sizes
+# disable-chunked-mm-input: false  # Disable chunked multimodal input
+# enable-chunked-prefill: null  # Enable chunked prefill requests
+# long-prefill-token-threshold: 0  # Threshold for long prefill requests
+# max-long-partial-prefills: 1  # Maximum number of long prompts to prefill concurrently
+# max-num-batched-tokens: null  # Maximum number of tokens to be processed in a single iteration
+# max-num-partial-prefills: 1  # Maximum number of sequences that can be partially prefilled
+# max-num-seqs: null  # Maximum number of sequences to be processed in a single iteration
+# multi-step-stream-outputs: true  # Stream outputs at the end of all steps
+# num-lookahead-slots: 0  # Number of slots to allocate per sequence per step
+# num-scheduler-steps: 1  # Maximum number of forward steps per scheduler call
+# preemption-mode: null  # Whether to perform preemption by swapping or recomputation
+# scheduler-cls: "vllm.core.scheduler.Scheduler"  # The scheduler class to use
+# scheduler-delay-factor: 0.0  # Delay factor for scheduling next prompt
+# scheduling-policy: "fcfs"  # The scheduling policy to use
+
+# # VLLM Configuration
+# additional-config: {}  # Additional config for specified platform
+# compilation-config: {"inductor_compile_config": {"enable_auto_functionalized_v2": false}}  # torch.compile configuration
+# kv-events-config: null  # The configurations for event publishing
+# kv-transfer-config: null  # The configurations for distributed KV cache transfer 

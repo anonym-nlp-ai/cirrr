@@ -1,11 +1,16 @@
 from argparse import ArgumentParser
+from datetime import datetime
 import sys
 
 sys.path.append("./../")
 from aimw.app.topology.graph.cir3_graph import Cir3Graph
 from aimw.app.utils import common_utils
 from loguru import logger
+from aimw.app.core.log_config import LoggingSettings, get_log_settings, setup_app_logging
 
+
+# setup logging as early as possible
+setup_app_logging(config=LoggingSettings())
 
 def main(args):
 
@@ -30,12 +35,13 @@ def main(args):
 
     logger.info("Starting CIR3 ...")
     # Params can be adjusted as part of the input:
-    inputs = {"document": document, "num_steps": 0, "M": 7, "N": 8, "L": 3, "K": 4}
+    inputs = {"document": document, "num_steps": 0, "M": 3, "N": 5, "L": 3, "K": 4}
     output = cir3Graph.topology.invoke(inputs)
     logger.info(f"Final set of question-answer pairs: \n {output['final_qas']}")
 
-    common_utils.save_json(output["final_qas"], output_dir, "cir3.json")
-
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f"cir3_{timestamp}.json"
+    common_utils.save_json(output["final_qas"], output_dir, filename)
 
 if __name__ == "__main__":
     parser = ArgumentParser()

@@ -1,0 +1,15 @@
+
+# Prometheus SSL Proxy (port 9090)
+server {
+    listen ${PROMETHEUS_PORT} ssl;
+
+    ssl_certificate /etc/nginx/certs/${SSL_CERT_NAME};
+    ssl_certificate_key /etc/nginx/certs/${SSL_CERT_KEY_NAME};
+
+    ssl_protocols TLSv1.2 TLSv1.3;
+
+    # Use the same compatible cipher list for Prometheus
+    # ssl_ciphers 'ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384';
+
+    proxy_pass ${PROMETHEUS_SERVICE_HOST}:${PROMETHEUS_SERVICE_PORT};  # Proxy to Prometheus container
+}

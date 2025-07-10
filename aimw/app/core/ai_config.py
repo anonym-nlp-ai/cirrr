@@ -19,15 +19,17 @@ class CIR3Settings(BaseSettings):
     temperature: float = Field(default=0.1)
     nucleus_sampling: float = Field(default=0.5)
     llm_models_info: dict = Field(default=...)
+    allow_repeats_writers_model: bool = Field(default=False)
 
-    groq_api_key: str
     langchain_api_key: str
+    groq_api_key: str
     openai_api_key: str
+    anthropic_api_key: str
 
     verbose: bool = Field(default=True)
     streaming: bool = Field(default=True)
     max_tokens: int = Field(default=5000)
-
+    compute_device: str = Field(default="cuda")
     ai_model_kwargs: dict = Field(default={"seed": 201})
 
     M: int = 5
@@ -36,6 +38,49 @@ class CIR3Settings(BaseSettings):
     K: int = 6
 
     qgen_model_path: str = "BeIR/query-gen-msmarco-t5-large-v1"
+
+   # Curmudgeon strategies: "vendi_only", "curmudgeon_only", "curmudgeon_vendi", "random_rejection"
+    curmudgeon_strategy: str = Field(default="curmudgeon_vendi")
+    rondon_disagreement_probability: float = Field(default=0.8)
+    # Vendi base model: "ngram_score", "bert_score", "bge" or "simcse_score"
+    vendi_base_model: str = Field(default="simcse_score")
+    # or path can be used instead (implemntation supports model tag or model path)
+    vendi_base_model_path: str = Field(default="princeton-nlp/unsup-simcse-bert-base-uncased")
+
+    # Empirically, SimCSE produces similarity scores in the range of 1 to 2, 
+    # with 1 indicating perfect similarity, typically observed between a given 
+    # context and its corresponding concatenated answers:
+    # relative weighting of diversity (qa)
+    alpha_qa: float = Field(default=0.5)
+    # relative weighting of alignment (ca)
+    alpha_ca: float = Field(default=0.5)
+
+    balanced_g_score_threshold: float = Field(default=1.2)
+
+    template_llama: str = Field(default="""<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+    {system_message}
+    <|eot_id|><|start_header_id|>user<|end_header_id|>
+    {user_prompt}
+    <|eot_id|><|start_header_id|>assistant<|end_header_id|>""")
+
+    template_gemma3: str = Field(default="""<start_of_turn>user
+    {system_message}
+    {user_prompt}
+    <end_of_turn>
+    <start_of_turn>model""")
+
+    template_openai: str = Field(default="""{system_message}
+    {user_prompt}""")
+
+    template_claude: str = Field(default="""<system>
+    {system_message}
+    </system>
+    <user>
+    {user_prompt}
+    </user>
+    <assistant>""")
+
+    cross_classifier_agents_params: list = Field(default=...)
 
     @field_validator("groq_api_key")
     @classmethod

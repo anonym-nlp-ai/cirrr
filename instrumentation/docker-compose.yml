@@ -1,0 +1,87 @@
+services:
+  # Nginx reverse proxy for SSL termination
+  vllm-nginx:
+    image: "vllm-instrumentation-proxy:v0.2.1"
+    build: 
+      context: ./nginx
+      dockerfile: Dockerfile
+      args:
+        - NGINX_VERSION=${NGINX_VERSION:-1.27.5}
+    container_name: vllm_instrumentation_proxy
+    ports:
+      - "${PROMETHEUS_PORT}:${PROMETHEUS_SERVICE_PORT}"  # SSL endpoint for Prometheus
+    environment:
+      # External ports for SSL termination
+      - PROMETHEUS_PORT=${PROMETHEUS_PORT:-9054}
+      - PROMETHEUS_SERVICE_HOST=${PROMETHEUS_SERVICE_HOST:-vllm-prometheus}
+      - PROMETHEUS_SERVICE_PORT=${PROMETHEUS_SERVICE_PORT:-9054}
+      - SSL_CERT_NAME=${SSL_CERT_NAME:-fullchain.pem}
+      - SSL_CERT_KEY_NAME=${SSL_CERT_KEY_NAME:-privkey.pem}
+    logging:
+      driver: "local"
+      options:
+        max-size: "10M"
+        max-file: "14"      
+    volumes:
+      # - ./conf/nginx/nginx.conf:/etc/nginx/nginx.conf          # Nginx configuration
+      - ${SSL_CERT_DIR}:/etc/nginx/certs       # SSL certificates
+      - ${NGINX_LOGS_DIR}:/var/log/nginx       # Nginx logs
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost"]
+    #   interval: 10s
+    #   timeout: 5s
+    #   retries: 10
+    #   start_period: 10s
+    networks:
+      - vllm_instrumentation_network
+    restart: unless-stopped
+
+  vllm-prometheus:
+    # Official Prometheus image that provides monitoring and alerting
+    image: prom/prometheus:${PROMETHEUS_VERSION:-latest}
+    container_name: vllm_instrumentation_prometheus
+    command:
+      # Path to main Prometheus configuration file
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      # Directory where Prometheus will store its time-series database
+      # Data is persisted through the prometheus_data volume
+      - '--storage.tsdb.path=/prometheus'
+      # Set retention time to 90 days
+      - '--storage.tsdb.retention.time=90d'
+      # Set retention size to 0.5GB
+      - '--storage.tsdb.retention.size=0.5GB'
+      # Directory containing JavaScript libraries for Prometheus web UI
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      # Directory containing console template files for custom dashboards
+      - '--web.console.templates=/etc/prometheus/consoles'
+      # Enable HTTP API endpoints for runtime configuration management
+      # Allows configuration reloads without restart (POST to /-/reload)
+      - '--web.enable-lifecycle'
+      - '--web.listen-address=:${PROMETHEUS_SERVICE_PORT:-9054}'
+    volumes:
+      # Mount local Prometheus config directory
+      - ${PROMETHEUS_CONF_DIR}:/etc/prometheus
+      # Persistent volume for storing metric data
+      - vllm_instrumentation_prometheus_data:/prometheus
+    healthcheck:
+      test: ["CMD-SHELL", "wget --spider -q http://localhost:${PROMETHEUS_SERVICE_PORT}/-/healthy || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+    networks:
+      - vllm_instrumentation_network
+    restart: unless-stopped
+
+# Persistent storage volumes
+volumes:
+  vllm_instrumentation_prometheus_data:  # Named volume for Prometheus data
+    name: vllm_instrumentation_prometheus_data
+
+
+# Network configuration
+networks:
+  vllm_instrumentation_network:
+    driver: bridge    # Standard bridge network for container communication
+    name: vllm_instrumentation_network
+

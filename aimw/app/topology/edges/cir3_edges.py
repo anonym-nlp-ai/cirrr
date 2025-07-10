@@ -17,9 +17,9 @@ def route_outer_refinement(state):
 
     num_steps = state["num_steps"]
     num_steps += 1
-
+     
     route = ("terminate", "debate")[
-        (outer_transactive_memory[-1]["curmudgeon_status"] == "continue") and (K >= 0)
+        (K >= 0) and (outer_transactive_memory[-1]["curmudgeon_status"] == "continue")
     ]
 
     logger.info(f"Route: {route}")

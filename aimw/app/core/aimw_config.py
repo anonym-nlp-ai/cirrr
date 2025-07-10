@@ -85,9 +85,9 @@ class BasicSettings(BaseSettings):
     APP_NAME: str = "CIR3"
     # import pkg_resources
     # my_version = pkg_resources.get_distribution('my-package-name').version
-    APP_VERSION = "0.1.17"
+    APP_VERSION = "0.3.8"
     ENVIRONMENT: str = Environment.DEVELOPMENT
-    ADMIN_EMAIL: str = "cir3.anonym@anonym.com"
+    ADMIN_EMAIL: str = "sami.saadaoui@citystgeorges.ac.uk"
 
     class Config:
         case_sensitive = True
